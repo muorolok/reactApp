@@ -44,7 +44,7 @@ const List = ({ data, handleEdit, handleDelete }) => {
               {hoveredIndex === index && (
                 <Button
                   variant="warning"
-                  style={{ fontSize: '0.8rem' }}
+                  style={{ fontSize: "0.8rem" }}
                   onClick={() => handleEdit(index)}
                   className="mx-2"
                 >

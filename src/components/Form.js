@@ -11,8 +11,6 @@ const FormComponent = () => {
   const [isEmpty, setIsEmpty] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [editingIndex, setEditingIndex] = useState(null);
-  const [local, setLocal] = useState(null);
-  const [localData, setLocalData] = useState([]);
 
   const handleSave = (event) => {
     event.preventDefault();
@@ -26,7 +24,6 @@ const FormComponent = () => {
         setEditingIndex(null);
       } else {
         setData([...data, { name, description }]);
-        setLocal(false);
       }
       setName("");
       setDescription("");
@@ -58,29 +55,18 @@ const FormComponent = () => {
       });
     } else {
       setData(storedData);
-      setLocal(true);
     }
   };
 
   const handleDelete = (index) => {
-    if (local) {
-      const updatedData = [...localData];
-      updatedData.splice(index, 1);
-      setLocalData(updatedData);
-      const newLocalData = [...updatedData];
-      localStorage.setItem("data", JSON.stringify(newLocalData));
-    } else {
-      const updatedData = [...data];
-      updatedData.splice(index, 1);
-      setData(updatedData);
-    }
+    const updatedData = [...data];
+    updatedData.splice(index, 1);
+    setData(updatedData);
   };
 
   const handleEdit = (index) => {
-   
-      setName(data[index].name);
-      setDescription(data[index].description);
-    
+    setName(data[index].name);
+    setDescription(data[index].description);
 
     setIsEditing(true);
     setEditingIndex(index);
@@ -132,11 +118,7 @@ const FormComponent = () => {
           Data is empty in Local Storage
         </div>
       )}
-      <List
-        data={data}
-        handleEdit={handleEdit}
-        handleDelete={handleDelete}
-      />
+      <List data={data} handleEdit={handleEdit} handleDelete={handleDelete} />
 
       <ToastContainer />
     </div>
