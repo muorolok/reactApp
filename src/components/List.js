@@ -1,9 +1,12 @@
 import React, { useState } from "react";
-import { Table, Button } from "react-bootstrap";
-import { FaEdit, FaTrash } from "react-icons/fa";
+import { Table, Button, Form } from "react-bootstrap";
+import { FaEdit, FaTrash, FaCheck, FaTimes } from "react-icons/fa";
 
 const List = ({ data, handleEdit, handleDelete }) => {
   const [hoveredIndex, setHoveredIndex] = useState(null);
+  const [editableIndex, setEditableIndex] = useState(null);
+  const [name, setName] = useState("");
+  const [description, setDescription] = useState("");
 
   const handleHover = (index) => {
     setHoveredIndex(index);
@@ -11,6 +14,25 @@ const List = ({ data, handleEdit, handleDelete }) => {
 
   const handleMouseLeave = () => {
     setHoveredIndex(null);
+  };
+
+  const handleEditClick = (index) => {
+    setEditableIndex(index);
+    setName(data[index].name);
+    setDescription(data[index].description);
+  };
+
+  const handleSaveClick = () => {
+    handleEdit(editableIndex, name, description);
+    setEditableIndex(null);
+    setName("");
+    setDescription("");
+  };
+
+  const handleCancelClick = () => {
+    setEditableIndex(null);
+    setName("");
+    setDescription("");
   };
 
   return (
@@ -31,25 +53,69 @@ const List = ({ data, handleEdit, handleDelete }) => {
             onMouseLeave={() => handleMouseLeave()}
           >
             <td>{index + 1}</td>
-            <td>{item.name}</td>
-            <td>{item.description}</td>
             <td>
-              <Button
-                variant="danger"
-                style={{ fontSize: "0.8rem" }}
-                onClick={() => handleDelete(index)}
-              >
-                <FaTrash />
-              </Button>
-              {hoveredIndex === index && (
+              {editableIndex === index ? (
+                <Form.Control
+                  type="text"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                />
+              ) : (
+                item.name
+              )}
+            </td>
+            <td>
+              {editableIndex === index ? (
+                <Form.Control
+                  as="textarea"
+                  rows={3}
+                  value={description}
+                  onChange={(e) => setDescription(e.target.value)}
+                />
+              ) : (
+                item.description
+              )}
+            </td>
+            <td>
+              {editableIndex === index ? (
+                <>
+                  <Button
+                    variant="success"
+                    style={{ fontSize: "0.8rem" }}
+                    onClick={handleSaveClick}
+                    className="mx-2"
+                  >
+                    <FaCheck />
+                  </Button>
+                  <Button
+                    variant="danger"
+                    style={{ fontSize: "0.8rem" }}
+                    onClick={handleCancelClick}
+                  >
+                    <FaTimes />
+                  </Button>
+                </>
+              ) : (
+                <>
                 <Button
-                  variant="warning"
-                  style={{ fontSize: "0.8rem" }}
-                  onClick={() => handleEdit(index)}
-                  className="mx-2"
-                >
-                  <FaEdit />
-                </Button>
+                    variant="danger"
+                    style={{ fontSize: "0.8rem" }}
+                    onClick={() => handleDelete(index)}
+                  >
+                    <FaTrash />
+                  </Button>
+                  {hoveredIndex === index && (
+                    <Button
+                      variant="warning"
+                      style={{ fontSize: "0.8rem" }}
+                      onClick={() => handleEditClick(index)}
+                      className="mx-2"
+                    >
+                      <FaEdit />
+                    </Button>
+                  )}
+                  
+                </>
               )}
             </td>
           </tr>

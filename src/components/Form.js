@@ -8,23 +8,12 @@ const FormComponent = () => {
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [data, setData] = useState([]);
-  const [isEmpty, setIsEmpty] = useState(false);
-  const [isEditing, setIsEditing] = useState(false);
-  const [editingIndex, setEditingIndex] = useState(null);
 
   const handleSave = (event) => {
     event.preventDefault();
     if (name && description) {
-      if (isEditing) {
-        const newData = [...data];
-        newData[editingIndex].name = name;
-        newData[editingIndex].description = description;
-        setData(newData);
-        setIsEditing(false);
-        setEditingIndex(null);
-      } else {
-        setData([...data, { name, description }]);
-      }
+      setData([...data, { name, description }]);
+
       setName("");
       setDescription("");
     }
@@ -47,11 +36,9 @@ const FormComponent = () => {
     const storedData = JSON.parse(localStorage.getItem("data"));
 
     if (!storedData || storedData.length === 0) {
-      setIsEmpty(true);
       toast.error("No data found in local storage.", {
         position: toast.POSITION.TOP_CENTER,
         autoClose: 3000,
-        onClose: () => setIsEmpty(false),
       });
     } else {
       setData(storedData);
@@ -64,12 +51,11 @@ const FormComponent = () => {
     setData(updatedData);
   };
 
-  const handleEdit = (index) => {
-    setName(data[index].name);
-    setDescription(data[index].description);
-
-    setIsEditing(true);
-    setEditingIndex(index);
+  const handleEdit = (index, name, description) => {
+    const newData = [...data];
+    newData[index].name = name;
+    newData[index].description = description;
+    setData(newData);
   };
 
   return (
@@ -95,7 +81,7 @@ const FormComponent = () => {
         </Form.Group>
         <div style={{ marginTop: "1rem", marginBottom: "1rem" }}>
           <Button variant="primary" type="submit">
-            {isEditing ? "Edit" : "Save"}
+            Save
           </Button>
           <Button
             variant="success"
@@ -113,11 +99,7 @@ const FormComponent = () => {
           </Button>
         </div>
       </Form>
-      {isEmpty && (
-        <div style={{ marginBottom: "20px" }}>
-          Data is empty in Local Storage
-        </div>
-      )}
+
       <List data={data} handleEdit={handleEdit} handleDelete={handleDelete} />
 
       <ToastContainer />
